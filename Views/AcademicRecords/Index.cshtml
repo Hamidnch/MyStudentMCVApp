@@ -61,7 +61,9 @@
                 </td>
                 <td>
                     <a asp-controller="AcademicRecords" asp-action="Edit"
-                       asp-route-StudentId="@item.StudentId"
+                       asp-route-StudentId="@item.StudentId" 
+    @*                   asp-route-StudentName="@item.StudentName"
+                       asp-route-StudentCourse="@item.CourseCodeNavigationTitle"*@
                        asp-route-CourseCode="@item.CourseCode">Edit</a>
                 </td>
             </tr>

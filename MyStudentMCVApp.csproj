@@ -21,6 +21,7 @@
   <ItemGroup>
     <Folder Include="Migrations\" />
     <Folder Include="Models\DataAccess\" />
+    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>

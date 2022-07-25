@@ -1,4 +1,7 @@
-﻿namespace MyStudentMCVApp.Dtos
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Framework;
+
+namespace MyStudentMCVApp.Dtos
 {
     public class AcademicRecordDto
     {

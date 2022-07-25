@@ -7,6 +7,7 @@ using MyStudentMCVApp.Dtos;
 
 namespace MyStudentMCVApp.Controllers
 {
+
     public class AcademicRecordsController : Controller
     {
         private readonly StudentRecordContext _context;
@@ -17,7 +18,9 @@ namespace MyStudentMCVApp.Controllers
             _context = context;
             _mapper = mapper;
         }
+        //LINQ
 
+        [HttpGet]
         public async Task<IActionResult> Index(string sortOrder)
         {
             if (string.IsNullOrEmpty(sortOrder))
@@ -32,23 +35,21 @@ namespace MyStudentMCVApp.Controllers
                 .OrderBy(a => a.CourseCodeNavigation.Title)
                 .ThenBy(a => a.Student.Name);
 
+            HttpContext.Session.SetString("sortOrder", sortOrder);
 
             switch (sortOrder)
             {
                 case "course_title_desc":
-                    HttpContext.Session.SetString("sortOrder", "course_title_desc");
                     allRecords = allRecords
                         .OrderByDescending(a => a.CourseCodeNavigation.Title)
                         .ThenBy(a => a.Student.Name);
                     break;
                 case "student_name":
-                    HttpContext.Session.SetString("sortOrder", "student_name");
                     allRecords = allRecords
                         .OrderBy(a => a.Student.Name)
                         .ThenBy(a => a.CourseCodeNavigation.Title);
                     break;
                 case "student_name_desc":
-                    HttpContext.Session.SetString("sortOrder", "student_name_desc");
                     allRecords = allRecords
                         .OrderByDescending(a => a.Student.Name)
                         .ThenBy(a => a.CourseCodeNavigation.Title);
@@ -56,7 +57,6 @@ namespace MyStudentMCVApp.Controllers
                 case "course_title":
                     goto default;
                 default:
-                    HttpContext.Session.SetString("sortOrder", "course_title");
                     allRecords = allRecords
                         .OrderBy(a => a.CourseCodeNavigation.Title)
                         .ThenBy(a => a.Student.Name);
@@ -141,6 +141,9 @@ namespace MyStudentMCVApp.Controllers
             //    return NotFound();
             //}
 
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == studentId);
+            var course = await _context.Courses.FirstOrDefaultAsync(s => s.Code == courseCode);
+
             var academicRecord = await _context.AcademicRecords.FindAsync(studentId, courseCode);
             if (academicRecord == null)
             {
@@ -151,6 +154,14 @@ namespace MyStudentMCVApp.Controllers
                 new SelectList(_context.Courses, "Code", "Title", academicRecord.CourseCode);
             ViewData["StudentId"] =
                 new SelectList(_context.Students, "Id", "Name", academicRecord.StudentId);
+            
+            //var academicRecordDto = new AcademicRecordDto()
+            //{
+            //    CourseCode = courseCode,
+            //    CourseCodeNavigationTitle = course.Title,
+            //    StudentId = studentId,
+            //    StudentName = student.Name
+            //};
 
             return View(academicRecord);
         }
