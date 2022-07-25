@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using MyStudentMCVApp.Dtos
+@model IEnumerable<AcademicRecordDto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@if (TempData["Errors"] != null)
+{
+    foreach (var error in ((IEnumerable<string>)TempData["Errors"]!)!)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+}
+@Html.AntiForgeryToken()
+<form asp-controller="AcademicRecords" asp-action="EditAll" method="post">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                @Html.ActionLink("Course", "Index", new { sortOrder = ViewBag.CourseSort})
+            </th>
+            <th>
+                @Html.ActionLink("Student", "Index", new { sortOrder = ViewBag.StudentSort }) 
+            </th>
+            <th>
+                Grade
+            </th>
+            <th>
+                <input id="btn-show" class="btn btn-link" type="button" value="Edit All"/>
+                <input id="btn-submit" style="display: none" class="btn btn-link" type="submit" value="Save all"/>
+                @*@Html.ActionLink("Edit All", "EditAll")*@
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem =>
+                        item.CourseCode) - @Html.DisplayFor(modelItem =>
+                                               item.CourseCodeNavigationTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem =>
+                        item.StudentId) - @Html.DisplayFor(modelItem => item.StudentName)
+                </td>
+                <td>
+                    <span class="read-grade">@Html.DisplayFor(modelItem => item.Grade)</span>
+                    <input id="item_StudentId" name="item_StudentId" type="hidden" value="@item.StudentId"/>
+                    <input id="item_CourseCode" name="item_CourseCode" type="hidden" value="@item.CourseCode"/>
+                    <input id="item_Grade" class="edit-grade" style="display: none" name="item.Grade" type="number" value="@item.Grade">
+                </td>
+                <td>
+                    <a asp-controller="AcademicRecords" asp-action="Edit"
+                       asp-route-StudentId="@item.StudentId"
+                       asp-route-CourseCode="@item.CourseCode">Edit</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</form>
+@section Scripts
+{
+    <script type="text/javascript">
+
+            $("#btn-show").click(function() {
+                $(".edit-grade").css("display", "block");
+                $(".read-grade").css("display", "none");
+                $("#btn-show").css("display", "none");
+                $("#btn-submit").css("display", "block");
+            });
+
+            $("#btn-submit").click(function() {
+                $(".edit-grade").css("display", "none");
+                $(".read-grade").css("display", "block");
+                $("#btn-show").css("display", "block");
+                $("#btn-submit").css("display", "none");
+            });
+
+    </script>
+}
